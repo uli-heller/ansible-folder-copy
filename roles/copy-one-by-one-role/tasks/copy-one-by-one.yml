@@ -1,0 +1,319 @@
+---
+# tasks/copy-one-by-one.yml
+- name: create folder vhosts.d
+  file: path=/tmp/copied-by-ansible/apache2/vhosts.d state=directory
+
+- name: create folder conf.d
+  file: path=/tmp/copied-by-ansible/apache2/conf.d state=directory
+
+- name: create folder deep paths
+  file: path=/tmp/copied-by-ansible/data/with/deep/paths state=directory
+
+- name: copy template.vhost
+  copy: src=rollout/apache2/vhosts.d/template.vhost dest=/tmp/copied-by-ansible/apache2/vhosts.d/template.vhost
+
+- name: copy template.conf
+  copy: src=rollout/apache2/conf.d/template.conf dest=/tmp/copied-by-ansible/apache2/conf.d/template.conf
+
+#- name: copy $ii.txt
+#  copy: src=rollout/data/with/deep/paths/$ii.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/$ii.txt
+
+- name: copy 001.txt
+  copy: src=rollout/data/with/deep/paths/001.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/001.txt
+
+- name: copy 002.txt
+  copy: src=rollout/data/with/deep/paths/002.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/002.txt
+
+- name: copy 003.txt
+  copy: src=rollout/data/with/deep/paths/003.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/003.txt
+
+- name: copy 004.txt
+  copy: src=rollout/data/with/deep/paths/004.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/004.txt
+
+- name: copy 005.txt
+  copy: src=rollout/data/with/deep/paths/005.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/005.txt
+
+- name: copy 006.txt
+  copy: src=rollout/data/with/deep/paths/006.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/006.txt
+
+- name: copy 007.txt
+  copy: src=rollout/data/with/deep/paths/007.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/007.txt
+
+- name: copy 008.txt
+  copy: src=rollout/data/with/deep/paths/008.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/008.txt
+
+- name: copy 009.txt
+  copy: src=rollout/data/with/deep/paths/009.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/009.txt
+
+- name: copy 010.txt
+  copy: src=rollout/data/with/deep/paths/010.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/010.txt
+
+- name: copy 011.txt
+  copy: src=rollout/data/with/deep/paths/011.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/011.txt
+
+- name: copy 012.txt
+  copy: src=rollout/data/with/deep/paths/012.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/012.txt
+
+- name: copy 013.txt
+  copy: src=rollout/data/with/deep/paths/013.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/013.txt
+
+- name: copy 014.txt
+  copy: src=rollout/data/with/deep/paths/014.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/014.txt
+
+- name: copy 015.txt
+  copy: src=rollout/data/with/deep/paths/015.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/015.txt
+
+- name: copy 016.txt
+  copy: src=rollout/data/with/deep/paths/016.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/016.txt
+
+- name: copy 017.txt
+  copy: src=rollout/data/with/deep/paths/017.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/017.txt
+
+- name: copy 018.txt
+  copy: src=rollout/data/with/deep/paths/018.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/018.txt
+
+- name: copy 019.txt
+  copy: src=rollout/data/with/deep/paths/019.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/019.txt
+
+- name: copy 020.txt
+  copy: src=rollout/data/with/deep/paths/020.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/020.txt
+
+- name: copy 021.txt
+  copy: src=rollout/data/with/deep/paths/021.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/021.txt
+
+- name: copy 022.txt
+  copy: src=rollout/data/with/deep/paths/022.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/022.txt
+
+- name: copy 023.txt
+  copy: src=rollout/data/with/deep/paths/023.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/023.txt
+
+- name: copy 024.txt
+  copy: src=rollout/data/with/deep/paths/024.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/024.txt
+
+- name: copy 025.txt
+  copy: src=rollout/data/with/deep/paths/025.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/025.txt
+
+- name: copy 026.txt
+  copy: src=rollout/data/with/deep/paths/026.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/026.txt
+
+- name: copy 027.txt
+  copy: src=rollout/data/with/deep/paths/027.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/027.txt
+
+- name: copy 028.txt
+  copy: src=rollout/data/with/deep/paths/028.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/028.txt
+
+- name: copy 029.txt
+  copy: src=rollout/data/with/deep/paths/029.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/029.txt
+
+- name: copy 030.txt
+  copy: src=rollout/data/with/deep/paths/030.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/030.txt
+
+- name: copy 031.txt
+  copy: src=rollout/data/with/deep/paths/031.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/031.txt
+
+- name: copy 032.txt
+  copy: src=rollout/data/with/deep/paths/032.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/032.txt
+
+- name: copy 033.txt
+  copy: src=rollout/data/with/deep/paths/033.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/033.txt
+
+- name: copy 034.txt
+  copy: src=rollout/data/with/deep/paths/034.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/034.txt
+
+- name: copy 035.txt
+  copy: src=rollout/data/with/deep/paths/035.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/035.txt
+
+- name: copy 036.txt
+  copy: src=rollout/data/with/deep/paths/036.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/036.txt
+
+- name: copy 037.txt
+  copy: src=rollout/data/with/deep/paths/037.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/037.txt
+
+- name: copy 038.txt
+  copy: src=rollout/data/with/deep/paths/038.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/038.txt
+
+- name: copy 039.txt
+  copy: src=rollout/data/with/deep/paths/039.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/039.txt
+
+- name: copy 040.txt
+  copy: src=rollout/data/with/deep/paths/040.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/040.txt
+
+- name: copy 041.txt
+  copy: src=rollout/data/with/deep/paths/041.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/041.txt
+
+- name: copy 042.txt
+  copy: src=rollout/data/with/deep/paths/042.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/042.txt
+
+- name: copy 043.txt
+  copy: src=rollout/data/with/deep/paths/043.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/043.txt
+
+- name: copy 044.txt
+  copy: src=rollout/data/with/deep/paths/044.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/044.txt
+
+- name: copy 045.txt
+  copy: src=rollout/data/with/deep/paths/045.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/045.txt
+
+- name: copy 046.txt
+  copy: src=rollout/data/with/deep/paths/046.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/046.txt
+
+- name: copy 047.txt
+  copy: src=rollout/data/with/deep/paths/047.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/047.txt
+
+- name: copy 048.txt
+  copy: src=rollout/data/with/deep/paths/048.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/048.txt
+
+- name: copy 049.txt
+  copy: src=rollout/data/with/deep/paths/049.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/049.txt
+
+- name: copy 050.txt
+  copy: src=rollout/data/with/deep/paths/050.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/050.txt
+
+- name: copy 051.txt
+  copy: src=rollout/data/with/deep/paths/051.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/051.txt
+
+- name: copy 052.txt
+  copy: src=rollout/data/with/deep/paths/052.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/052.txt
+
+- name: copy 053.txt
+  copy: src=rollout/data/with/deep/paths/053.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/053.txt
+
+- name: copy 054.txt
+  copy: src=rollout/data/with/deep/paths/054.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/054.txt
+
+- name: copy 055.txt
+  copy: src=rollout/data/with/deep/paths/055.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/055.txt
+
+- name: copy 056.txt
+  copy: src=rollout/data/with/deep/paths/056.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/056.txt
+
+- name: copy 057.txt
+  copy: src=rollout/data/with/deep/paths/057.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/057.txt
+
+- name: copy 058.txt
+  copy: src=rollout/data/with/deep/paths/058.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/058.txt
+
+- name: copy 059.txt
+  copy: src=rollout/data/with/deep/paths/059.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/059.txt
+
+- name: copy 060.txt
+  copy: src=rollout/data/with/deep/paths/060.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/060.txt
+
+- name: copy 061.txt
+  copy: src=rollout/data/with/deep/paths/061.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/061.txt
+
+- name: copy 062.txt
+  copy: src=rollout/data/with/deep/paths/062.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/062.txt
+
+- name: copy 063.txt
+  copy: src=rollout/data/with/deep/paths/063.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/063.txt
+
+- name: copy 064.txt
+  copy: src=rollout/data/with/deep/paths/064.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/064.txt
+
+- name: copy 065.txt
+  copy: src=rollout/data/with/deep/paths/065.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/065.txt
+
+- name: copy 066.txt
+  copy: src=rollout/data/with/deep/paths/066.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/066.txt
+
+- name: copy 067.txt
+  copy: src=rollout/data/with/deep/paths/067.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/067.txt
+
+- name: copy 068.txt
+  copy: src=rollout/data/with/deep/paths/068.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/068.txt
+
+- name: copy 069.txt
+  copy: src=rollout/data/with/deep/paths/069.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/069.txt
+
+- name: copy 070.txt
+  copy: src=rollout/data/with/deep/paths/070.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/070.txt
+
+- name: copy 071.txt
+  copy: src=rollout/data/with/deep/paths/071.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/071.txt
+
+- name: copy 072.txt
+  copy: src=rollout/data/with/deep/paths/072.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/072.txt
+
+- name: copy 073.txt
+  copy: src=rollout/data/with/deep/paths/073.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/073.txt
+
+- name: copy 074.txt
+  copy: src=rollout/data/with/deep/paths/074.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/074.txt
+
+- name: copy 075.txt
+  copy: src=rollout/data/with/deep/paths/075.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/075.txt
+
+- name: copy 076.txt
+  copy: src=rollout/data/with/deep/paths/076.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/076.txt
+
+- name: copy 077.txt
+  copy: src=rollout/data/with/deep/paths/077.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/077.txt
+
+- name: copy 078.txt
+  copy: src=rollout/data/with/deep/paths/078.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/078.txt
+
+- name: copy 079.txt
+  copy: src=rollout/data/with/deep/paths/079.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/079.txt
+
+- name: copy 080.txt
+  copy: src=rollout/data/with/deep/paths/080.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/080.txt
+
+- name: copy 081.txt
+  copy: src=rollout/data/with/deep/paths/081.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/081.txt
+
+- name: copy 082.txt
+  copy: src=rollout/data/with/deep/paths/082.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/082.txt
+
+- name: copy 083.txt
+  copy: src=rollout/data/with/deep/paths/083.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/083.txt
+
+- name: copy 084.txt
+  copy: src=rollout/data/with/deep/paths/084.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/084.txt
+
+- name: copy 085.txt
+  copy: src=rollout/data/with/deep/paths/085.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/085.txt
+
+- name: copy 086.txt
+  copy: src=rollout/data/with/deep/paths/086.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/086.txt
+
+- name: copy 087.txt
+  copy: src=rollout/data/with/deep/paths/087.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/087.txt
+
+- name: copy 088.txt
+  copy: src=rollout/data/with/deep/paths/088.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/088.txt
+
+- name: copy 089.txt
+  copy: src=rollout/data/with/deep/paths/089.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/089.txt
+
+- name: copy 090.txt
+  copy: src=rollout/data/with/deep/paths/090.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/090.txt
+
+- name: copy 091.txt
+  copy: src=rollout/data/with/deep/paths/091.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/091.txt
+
+- name: copy 092.txt
+  copy: src=rollout/data/with/deep/paths/092.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/092.txt
+
+- name: copy 093.txt
+  copy: src=rollout/data/with/deep/paths/093.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/093.txt
+
+- name: copy 094.txt
+  copy: src=rollout/data/with/deep/paths/094.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/094.txt
+
+- name: copy 095.txt
+  copy: src=rollout/data/with/deep/paths/095.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/095.txt
+
+- name: copy 096.txt
+  copy: src=rollout/data/with/deep/paths/096.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/096.txt
+
+- name: copy 097.txt
+  copy: src=rollout/data/with/deep/paths/097.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/097.txt
+
+- name: copy 098.txt
+  copy: src=rollout/data/with/deep/paths/098.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/098.txt
+
+- name: copy 099.txt
+  copy: src=rollout/data/with/deep/paths/099.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/099.txt
+
+- name: copy 100.txt
+  copy: src=rollout/data/with/deep/paths/100.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/100.txt

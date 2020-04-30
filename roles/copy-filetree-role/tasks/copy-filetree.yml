@@ -1,0 +1,8 @@
+---
+# tasks/copy-filetree.yml
+- name: Copy complete folder using copy and filetree
+  copy:
+    src: "{{ item.src }}"
+    dest: "/tmp/copied-by-ansible/{{ item.path }}"
+  with_filetree: rollout/
+  when: item.state == 'file'

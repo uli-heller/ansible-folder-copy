@@ -1,0 +1,4 @@
+---
+# tasks/synchronize-folder.yml
+- name: Synchronize complete folder
+  synchronize: src=rollout dest=/tmp/copied-by-ansible times=no checksum=yes delete=yes

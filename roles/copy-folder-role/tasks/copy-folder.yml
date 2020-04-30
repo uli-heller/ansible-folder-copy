@@ -1,0 +1,4 @@
+---
+# tasks/copy-folder.yml
+- name: Copy complete folder
+  copy: src=rollout dest=/tmp/copied-by-ansible

@@ -1,0 +1,3 @@
+---
+# tasks file for copy-one-by-one-role
+- include: copy-one-by-one.yml

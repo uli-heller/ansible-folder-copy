@@ -1,0 +1,5 @@
+---
+# file: copy-filetree.yml
+- hosts: all
+  roles:
+    - copy-filetree-role

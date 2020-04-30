@@ -1,0 +1,5 @@
+---
+# file: copy-folder.yml
+- hosts: all
+  roles:
+    - copy-folder-role

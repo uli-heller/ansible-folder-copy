@@ -1,0 +1,5 @@
+---
+# file: file-filetree.yml
+- hosts: all
+  roles:
+    - file-filetree-role

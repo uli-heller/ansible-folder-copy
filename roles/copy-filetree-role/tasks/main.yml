@@ -1,0 +1,4 @@
+---
+# tasks file for copy-filetree-role
+- include: copy-filetree.yml
+

@@ -1,0 +1,3 @@
+---
+# tasks file for file-filetree-role
+- include: file-filetree.yml

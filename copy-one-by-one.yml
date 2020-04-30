@@ -1,0 +1,5 @@
+---
+# file: copy-one-by-one.yml
+- hosts: all
+  roles:
+    - copy-one-by-one-role

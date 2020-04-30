@@ -1,0 +1,5 @@
+---
+# file: synchronize-folder.yml
+- hosts: all
+  roles:
+    - synchronize-folder-role
