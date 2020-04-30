@@ -1,7 +1,6 @@
 Ansible: Verzeichnisbaum
 ==========================
 
-
 Manchmal muß ich einen ganzen Verzeichnisbaum auf einen Rechner übertragen,
 der mittels Ansible administriert wird. Leider gibt es keine Lösung
 hierfür, die "supertoll" ist.
@@ -42,6 +41,7 @@ Zielsetzung
 * Einfache Anwendung
 * Schnelle Ausführung
 * Aussagekräftige Ausgabe bei `--check --diff`
+* Keine irritierenden Zusatzausgaben
 
 Lösungsalternativen
 -------------------
@@ -137,12 +137,18 @@ PLAY RECAP *********************************************************************
 ansible-test               : ok=106  changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 ```
 
-Die Ausführung dauert sehr lange. Es werden alle Dateien hochgeladen.
+Die Ausführung dauert sehr lange. Es werden keinerlei Dateien hochgeladen.
 
 Stoppuhr:
 * real	5m4.665s, user	1m47.408s, sys	1m10.628s
 * real	6m36.950s, user	2m11.236s, sys	1m19.168s
-* .
+* real	4m27.372s, user	1m14.708s, sys	0m44.964s
+
+### Abgleich löschen
+
+```
+uli@ulinuc:~/tmp/ansible-test$ ssh ansible-test rm -rf /tmp/copied-by-ansible
+```
 
 Dateien komplett kopieren mit `copy`
 ------------------------------------
@@ -151,17 +157,15 @@ Dateien komplett kopieren mit `copy`
 
 ```
 uli@ulinuc:~/tmp/ansible-test$ ansible-playbook copy-folder.yml --check --diff
-PLAY [all] *******************************************************************************************************************************************************************************************************************************
+PLAY [all] *******************************************************************************************************
 
-TASK [Gathering Facts] *******************************************************************************************************************************************************************************************************************
-[WARNING]: Platform linux on host ansible-test is using the discovered Python interpreter at /usr/bin/python, but future installation of another Python interpreter could change this. See
-https://docs.ansible.com/ansible/2.9/reference_appendices/interpreter_discovery.html for more information.
+TASK [Gathering Facts] *******************************************************************************************
 ok: [ansible-test]
 
-TASK [copy-folder-role : Copy complete folder] *******************************************************************************************************************************************************************************************
+TASK [copy-folder-role : Copy complete folder] *******************************************************************
 changed: [ansible-test]
 
-PLAY RECAP *******************************************************************************************************************************************************************************************************************************
+PLAY RECAP *******************************************************************************************************
 ansible-test               : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 ```
 
@@ -172,6 +176,46 @@ Stoppuhr - `time ansible-playbook copy-folder.yml --check --diff`
 * real	3m40.986s, user	0m56.912s, sys	0m34.692s
 * real	3m30.098s, user	0m57.872s, sys	0m35.396s
 * real	3m12.622s, user	0m48.276s, sys	0m28.536s
+
+### Aufruf ohne --check --diff mit Komplettabgleich
+
+Aufruf bei leerem Zielrechner, es müssen alle Dateien abgeglichen werden:
+
+```
+uli@ulinuc:~/tmp/ansible-test$ ansible-playbook copy-folder.yml
+...
+PLAY RECAP *******************************************************************************************************
+ansible-test               : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+```
+
+Die Ausführung dauert relativ lange. Es werden alle Dateien hochgeladen.
+
+Stoppuhr:
+* real	4m23.504s, user	1m10.928s, sys	0m42.812s
+
+### Aufruf ohne --check --diff ohne Abgleich
+
+Aufruf bei bereits aktualisiertem Zielrechner, es müssen keinerlei Dateien abgeglichen werden:
+
+```
+uli@ulinuc:~/tmp/ansible-test$ ansible-playbook copy-folder.yml
+...
+PLAY RECAP *******************************************************************************************************
+ansible-test               : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+```
+
+Die Ausführung dauert sehr lange. Es werden keinerlei Dateien hochgeladen.
+
+Stoppuhr:
+* real	3m23.959s, user	0m51.380s, sys	0m28.668s
+* real	3m17.905s, user	0m49.404s, sys	0m27.012s
+* real	3m25.674s, user	0m53.100s, sys	0m29.912s
+
+### Abgleich löschen
+
+```
+uli@ulinuc:~/tmp/ansible-test$ ssh ansible-test rm -rf /tmp/copied-by-ansible
+```
 
 Dateien komplett kopieren mit `synchronize`
 -------------------------------------------
@@ -205,9 +249,48 @@ Stoppuhr - `time ansible-playbook synchronize-folder.yml --check --diff`
 * real	0m7.990s, user	0m3.952s, sys	0m0.912s
 * real	0m7.629s, user	0m3.748s, sys	0m0.724s
 
+### Aufruf ohne --check --diff mit Komplettabgleich
 
-Dateien komplett kopieren mit`copy` und `filetree`
---------------------------------------------------
+Aufruf bei leerem Zielrechner, es müssen alle Dateien abgeglichen werden:
+
+```
+uli@ulinuc:~/tmp/ansible-test$ ansible-playbook synchronize-folder.yml
+...
+PLAY RECAP *******************************************************************************************************
+ansible-test               : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+```
+
+Die Ausführung geht sehr schnell. Es werden alle Dateien hochgeladen.
+
+Stoppuhr:
+* real	0m11.110s, user	0m4.572s, sys	0m0.836s
+
+### Aufruf ohne --check --diff ohne Abgleich
+
+Aufruf bei bereits aktualisiertem Zielrechner, es müssen keinerlei Dateien abgeglichen werden:
+
+```
+uli@ulinuc:~/tmp/ansible-test$ ansible-playbook synchronize-folder.yml
+...
+PLAY RECAP *******************************************************************************************************
+ansible-test               : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+```
+
+Die Ausführung geht sehr schnell. Es werden keinerlei Dateien hochgeladen.
+
+Stoppuhr:
+* real	0m8.789s, user	0m4.544s, sys	0m0.776s
+* real	0m8.449s, user	0m4.312s, sys	0m0.732s
+* real	0m8.281s, user	0m4.164s, sys	0m0.772s
+
+### Abgleich löschen
+
+```
+uli@ulinuc:~/tmp/ansible-test$ ssh ansible-test rm -rf /tmp/copied-by-ansible
+```
+
+Dateien komplett kopieren mit `copy` und `filetree`
+---------------------------------------------------
 
 ### Erster Aufruf mit --check --diff
 
@@ -255,45 +338,52 @@ Stoppuhr - `time ansible-playbook copy-filetree.yml --check --diff`
 * real	4m26.132s, user	1m10.852s, sys	0m49.024s
 * real	5m46.500s, user	1m45.084s, sys	1m7.800s
 
+### Aufruf ohne --check --diff mit Komplettabgleich
 
-Dateien komplett kopieren mit`file` und `filetree`
+Aufruf bei leerem Zielrechner, es müssen alle Dateien abgeglichen werden:
+
+```
+uli@ulinuc:~/tmp/ansible-test$ ansible-playbook copy-filetree.yml
+...
+PLAY RECAP *******************************************************************************************************
+ansible-test               : ok=5    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+```
+
+Die Ausführung dauert relativ lange. Es werden alle Dateien hochgeladen.
+
+Stoppuhr:
+* real	5m13.661s, user	1m28.992s, sys	0m58.184s
+
+### Aufruf ohne --check --diff ohne Abgleich
+
+Aufruf bei bereits aktualisiertem Zielrechner, es müssen keinerlei Dateien abgeglichen werden:
+
+```
+uli@ulinuc:~/tmp/ansible-test$ ansible-playbook copy-filetree.yml
+...
+PLAY RECAP *******************************************************************************************************
+ansible-test               : ok=5    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+```
+
+Die Ausführung dauert sehr lange. Es werden keinerlei Dateien hochgeladen.
+
+Stoppuhr:
+* real	4m10.495s, user	1m7.376s, sys	0m42.172s
+* real	4m24.945s, user	1m7.496s, sys	0m45.588s
+* real	4m52.096s, user	1m23.396s, sys	0m56.076s
+
+### Abgleich löschen
+
+```
+uli@ulinuc:~/tmp/ansible-test$ ssh ansible-test rm -rf /tmp/copied-by-ansible
+```
+
+Dateien komplett kopieren mit `file` und `filetree`
 --------------------------------------------------
 
-### Erster Aufruf mit --check --diff
-
-```
-uli@ulinuc:~/tmp/ansible-test$ ansible-playbook file-filetree.yml --check --diff
-PLAY [all] *******************************************************************************************************************************************************************************************************************************
-
-TASK [Gathering Facts] *******************************************************************************************************************************************************************************************************************
-ok: [ansible-test]
-
-TASK [file-filetree-role : Copy complete folder using file and filetree] *****************************************************************************************************************************************************************
-skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588249802.2199366, 'owner': 'uli', 'path': u'apache2', 'size': 28, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588249802.2199366}) 
-skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588249820.3719356, 'owner': 'uli', 'path': u'data', 'size': 8, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588249820.3719356}) 
-skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588249859.3399334, 'owner': 'uli', 'path': u'apache2/conf.d', 'size': 26, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588249859.3399334}) 
-skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588249879.5759323, 'owner': 'uli', 'path': u'apache2/vhosts.d', 'size': 28, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588249879.5759323}) 
-[WARNING]: The src option requires state to be 'link' or 'hard'.  This will become an error in Ansible 2.10
-failed: [ansible-test] (item={'src': u'/home/uli/tmp/ansible-test/files/rollout/apache2/conf.d/template.conf', 'group': u'uli', 'uid': 1000, 'state': 'file', 'gid': 1000, 'mode': '0664', 'mtime': 1588249859.3399334, 'owner': 'uli', 'path': u'apache2/conf.d/template.conf', 'size': 30, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588249859.3399334}) => {"ansible_loop_var": "item", "changed": false, "item": {"ctime": 1588249859.3399334, "gid": 1000, "group": "uli", "mode": "0664", "mtime": 1588249859.3399334, "owner": "uli", "path": "apache2/conf.d/template.conf", "root": "/home/uli/tmp/ansible-test/files/rollout/", "size": 30, "src": "/home/uli/tmp/ansible-test/files/rollout/apache2/conf.d/template.conf", "state": "file", "uid": 1000}, "msg": "file (/tmp/copied-by-ansible/apache2/conf.d/template.conf) is absent, cannot continue", "path": "/tmp/copied-by-ansible/apache2/conf.d/template.conf"}
-failed: [ansible-test] (item={'src': u'/home/uli/tmp/ansible-test/files/rollout/apache2/vhosts.d/template.vhost', 'group': u'uli', 'uid': 1000, 'state': 'file', 'gid': 1000, 'mode': '0664', 'mtime': 1588249879.5759323, 'owner': 'uli', 'path': u'apache2/vhosts.d/template.vhost', 'size': 31, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588249879.5759323}) => {"ansible_loop_var": "item", "changed": false, "item": {"ctime": 1588249879.5759323, "gid": 1000, "group": "uli", "mode": "0664", "mtime": 1588249879.5759323, "owner": "uli", "path": "apache2/vhosts.d/template.vhost", "root": "/home/uli/tmp/ansible-test/files/rollout/", "size": 31, "src": "/home/uli/tmp/ansible-test/files/rollout/apache2/vhosts.d/template.vhost", "state": "file", "uid": 1000}, "msg": "file (/tmp/copied-by-ansible/apache2/vhosts.d/template.vhost) is absent, cannot continue", "path": "/tmp/copied-by-ansible/apache2/vhosts.d/template.vhost"}
-skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588249820.3719356, 'owner': 'uli', 'path': u'data/with', 'size': 8, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588249820.3719356}) 
-skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588249820.3719356, 'owner': 'uli', 'path': u'data/with/deep', 'size': 10, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588249820.3719356}) 
-skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588250159.7319174, 'owner': 'uli', 'path': u'data/with/deep/paths', 'size': 1400, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588250159.7319174}) 
-failed: [ansible-test] (item={'src': u'/home/uli/tmp/ansible-test/files/rollout/data/with/deep/paths/001.txt', 'group': u'uli', 'uid': 1000, 'state': 'file', 'gid': 1000, 'mode': '0664', 'mtime': 1588250159.5719173, 'owner': 'uli', 'path': u'data/with/deep/paths/001.txt', 'size': 14, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588250159.5719173}) => {"ansible_loop_var": "item", "changed": false, "item": {"ctime": 1588250159.5719173, "gid": 1000, "group": "uli", "mode": "0664", "mtime": 1588250159.5719173, "owner": "uli", "path": "data/with/deep/paths/001.txt", "root": "/home/uli/tmp/ansible-test/files/rollout/", "size": 14, "src": "/home/uli/tmp/ansible-test/files/rollout/data/with/deep/paths/001.txt", "state": "file", "uid": 1000}, "msg": "file (/tmp/copied-by-ansible/data/with/deep/paths/001.txt) is absent, cannot continue", "path": "/tmp/copied-by-ansible/data/with/deep/paths/001.txt"}
-failed: [ansible-test] (item={'src': u'/home/uli/tmp/ansible-test/files/rollout/data/with/deep/paths/002.txt', 'group': u'uli', 'uid': 1000, 'state': 'file', 'gid': 1000, 'mode': '0664', 'mtime': 1588250159.5719173, 'owner': 'uli', 'path': u'data/with/deep/paths/002.txt', 'size': 14, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588250159.5719173}) => {"ansible_loop_var": "item", "changed": false, "item": {"ctime": 1588250159.5719173, "gid": 1000, "group": "uli", "mode": "0664", "mtime": 1588250159.5719173, "owner": "uli", "path": "data/with/deep/paths/002.txt", "root": "/home/uli/tmp/ansible-test/files/rollout/", "size": 14, "src": "/home/uli/tmp/ansible-test/files/rollout/data/with/deep/paths/002.txt", "state": "file", "uid": 1000}, "msg": "file (/tmp/copied-by-ansible/data/with/deep/paths/002.txt) is absent, cannot continue", "path": "/tmp/copied-by-ansible/data/with/deep/paths/002.txt"}
-failed: [ansible-test] (item={'src': u'/home/uli/tmp/ansible-test/files/rollout/data/with/deep/paths/003.txt', 'group': u'uli', 'uid': 1000, 'state': 'file', 'gid': 1000, 'mode': '0664', 'mtime': 1588250159.5759175, 'owner': 'uli', 'path': u'data/with/deep/paths/003.txt', 'size': 14, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588250159.5759175}) => {"ansible_loop_var": "item", "changed": false, "item": {"ctime": 1588250159.5759175, "gid": 1000, "group": "uli", "mode": "0664", "mtime": 1588250159.5759175, "owner": "uli", "path": "data/with/deep/paths/003.txt", "root": "/home/uli/tmp/ansible-test/files/rollout/", "size": 14, "src": "/home/uli/tmp/ansible-test/files/rollout/data/with/deep/paths/003.txt", "state": "file", "uid": 1000}, "msg": "file (/tmp/copied-by-ansible/data/with/deep/paths/003.txt) is absent, cannot continue", "path": "/tmp/copied-by-ansible/data/with/deep/paths/003.txt"}
-failed: [ansible-test] (item={'src': u'/home/uli/tmp/ansible-test/files/rollout/data/with/deep/paths/004.txt', 'group': u'uli', 'uid': 1000, 'state': 'file', 'gid': 1000, 'mode': '0664', 'mtime': 1588250159.5759175, 'owner': 'uli', 'path': u'data/with/deep/paths/004.txt', 'size': 14, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588250159.5759175}) => {"ansible_loop_var": "item", "changed": false, "item": {"ctime": 1588250159.5759175, "gid": 1000, "group": "uli", "mode": "0664", "mtime": 1588250159.5759175, "owner": "uli", "path": "data/with/deep/paths/004.txt", "root": "/home/uli/tmp/ansible-test/files/rollout/", "size": 14, "src": "/home/uli/tmp/ansible-test/files/rollout/data/with/deep/paths/004.txt", "state": "file", "uid": 1000}, "msg": "file (/tmp/copied-by-ansible/data/with/deep/paths/004.txt) is absent, cannot continue", "path": "/tmp/copied-by-ansible/data/with/deep/paths/004.txt"}
-```
-
-Die Ausführung dauert einige Zeit, ist aber nicht gan langsam.
-Man sieht keine DIFFs. Leider sieht man auch blaue Warnmeldungen mit "skipping: ..."
-
-Stoppuhr - `time ansible-playbook file-filetree.yml --check --diff`
-* real	2m31.535s, user	0m41.500s, sys	0m28.200s
-* real	2m32.658s, user	0m43.676s, sys	0m27.296s
-* .real	2m35.213s
-user	0m43.436s
-sys	0m27.628s
+Das funktioniert prinzipbedingt nicht!
+"file" kann zwar Verzeichnisse anlegen, aber keine
+Dateien kopieren!
 
 
 Grundaufbau
@@ -476,6 +566,15 @@ done
 ```
 ---
 # tasks/copy-filetree.yml
+- name: create folder vhosts.d
+  file: path=/tmp/copied-by-ansible/apache2/vhosts.d state=directory
+
+- name: create folder conf.d
+  file: path=/tmp/copied-by-ansible/apache2/conf.d state=directory
+
+- name: create folder deep paths
+  file: path=/tmp/copied-by-ansible/data/with/deep/paths state=directory
+
 - name: Copy complete folder using copy and filetree
   copy:
     src: "{{ item.src }}"         
@@ -497,10 +596,18 @@ done
 ```
 ---
 # tasks/file-filetree.yml    
+- name: create folder vhosts.d
+  file: path=/tmp/copied-by-ansible/apache2/vhosts.d state=directory
+
+- name: create folder conf.d
+  file: path=/tmp/copied-by-ansible/apache2/conf.d state=directory
+
+- name: create folder deep paths
+  file: path=/tmp/copied-by-ansible/data/with/deep/paths state=directory
+
 - name: Copy complete folder using file and filetree    
   file:
-    src:  '{{item.src}}'
-    dest: '/tmp/copied-by-ansible/{{item.path}}'
+    path: /tmp/copied-by-ansible/{{item.path}}
   with_filetree: rollout/
   when: item.state == 'file'
 ```
@@ -521,12 +628,13 @@ ansible-test | SUCCESS => {
 Bewertung
 ---------
 
-| Kriterium                              | Gewichtung | copy-einzeln | copy-komplett | synchronize-komplett | copy-filetree |
-| -------------------------------------- | ---------- | ------------ | ------------- | -------------------- | ------------- |
-| Einfache Anwendung                     |
-| Schnelle Ausführung - Zeit in Sekunden |
-| Schnelle Ausführung - Wertung          |
-| Ausgabe `--check --diff`               |
+| Kriterium                              | Gewichtung | copy-einzeln  | copy-komplett | synchronize-komplett | copy-filetree | file-filetree |
+| -------------------------------------- | ---------- | ------------- | ------------- | -------------------- | ------------- | ------------- |
+| Einfache Anwendung                     |            | nein          | ja            | ja                   | ja            | NA            |
+| Schnelle Ausführung - Zeit in Sekunden |            | 240 - 400s    | 200 - 300s    | 10s                  | 240 - 400s    | NA            |
+| Schnelle Ausführung - Wertung          |            | sehr schlecht | schlecht      | gut                  | sehr schlecht | NA            |
+| Ausgabe `--check --diff`               |            | super         | sehr schlecht | mittel               | super         | NA            |
+| Irritierende Zusatzausgaben            |            | super         | super         | super                | schlecht      | NA            |
 
 Links
 -----
