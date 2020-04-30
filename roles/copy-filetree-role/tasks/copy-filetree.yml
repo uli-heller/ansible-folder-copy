@@ -1,5 +1,14 @@
 ---
 # tasks/copy-filetree.yml
+- name: create folder vhosts.d
+  file: path=/tmp/copied-by-ansible/apache2/vhosts.d state=directory
+
+- name: create folder conf.d
+  file: path=/tmp/copied-by-ansible/apache2/conf.d state=directory
+
+- name: create folder deep paths
+  file: path=/tmp/copied-by-ansible/data/with/deep/paths state=directory
+
 - name: Copy complete folder using copy and filetree
   copy:
     src: "{{ item.src }}"
