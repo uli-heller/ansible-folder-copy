@@ -639,6 +639,10 @@ Bewertung
 Links
 -----
 
+* [Ansible - copy](https://docs.ansible.com/ansible/latest/modules/copy_module.html)
+* [Ansible - file](https://docs.ansible.com/ansible/latest/modules/file_module.html)
+* [Ansible - filetree](https://docs.ansible.com/ansible/latest/plugins/lookup/filetree.html?highlight=with_filetree)
+
 Änderungen
 ----------
 
