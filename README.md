@@ -5,6 +5,9 @@ Manchmal muß ich einen ganzen Verzeichnisbaum auf einen Rechner übertragen,
 der mittels Ansible administriert wird. Leider gibt es keine Lösung
 hierfür, die "supertoll" ist.
 
+Dieser Artikel basiert auf Ansible-2.9.3, die Quelltexte befinden
+sich auf [Github](https://github.com/uli-heller/ansible-folder-copy).
+
 <!-- more -->
 
 Aufgabenstellung
@@ -42,6 +45,7 @@ Zielsetzung
 * Schnelle Ausführung
 * Aussagekräftige Ausgabe bei `--check --diff`
 * Keine irritierenden Zusatzausgaben
+* Lange Pause bei den Fortschrittsausgaben
 
 Lösungsalternativen
 -------------------
@@ -58,7 +62,7 @@ Dateien einzeln kopieren mit `copy`
 ### Erster Aufruf mit --check --diff
 
 ```
-uli@ulinuc:~/tmp/ansible-test$ ansible-playbook copy-one-by-one.yml --check --diff
+uli@ulinuc:~/tmp/ansible-folder-copy$ ansible-playbook copy-one-by-one.yml --check --diff
 PLAY [all] *******************************************************************************************************************************************************************************************************************************
 
 TASK [Gathering Facts] *******************************************************************************************************************************************************************************************************************
@@ -68,7 +72,7 @@ ok: [ansible-test]
 
 TASK [copy-one-by-one-role : copy template.vhost] ********************************************************************************************************************************************************************************************
 --- before
-+++ after: /home/uli/tmp/ansible-test/roles/copy-one-by-one-role/files/rollout/apache2/vhosts.d/template.vhost
++++ after: /home/uli/tmp/ansible-folder-copy/roles/copy-one-by-one-role/files/rollout/apache2/vhosts.d/template.vhost
 @@ -0,0 +1 @@
 +Erste Version - template.vhost
 
@@ -76,7 +80,7 @@ changed: [ansible-test]
 
 TASK [copy-one-by-one-role : copy template.conf] *********************************************************************************************************************************************************************************************
 --- before
-+++ after: /home/uli/tmp/ansible-test/roles/copy-one-by-one-role/files/rollout/apache2/conf.d/template.conf
++++ after: /home/uli/tmp/ansible-folder-copy/roles/copy-one-by-one-role/files/rollout/apache2/conf.d/template.conf
 @@ -0,0 +1 @@
 +Erste Version - template.conf
 
@@ -84,7 +88,7 @@ changed: [ansible-test]
 
 TASK [copy-one-by-one-role : copy 001.txt] ***************************************************************************************************************************************************************************************************
 --- before
-+++ after: /home/uli/tmp/ansible-test/roles/copy-one-by-one-role/files/rollout/data/with/deep/paths/001.txt
++++ after: /home/uli/tmp/ansible-folder-copy/roles/copy-one-by-one-role/files/rollout/data/with/deep/paths/001.txt
 @@ -0,0 +1 @@
 +Datei 001 - 1
 
@@ -92,7 +96,7 @@ changed: [ansible-test]
 
 TASK [copy-one-by-one-role : copy 002.txt] ***************************************************************************************************************************************************************************************************
 --- before
-+++ after: /home/uli/tmp/ansible-test/roles/copy-one-by-one-role/files/rollout/data/with/deep/paths/002.txt
++++ after: /home/uli/tmp/ansible-folder-copy/roles/copy-one-by-one-role/files/rollout/data/with/deep/paths/002.txt
 @@ -0,0 +1 @@
 +Datei 002 - 2
 
@@ -115,7 +119,7 @@ Stoppuhr - `time ansible-playbook copy-one-by-one.yml --check --diff`
 Aufruf bei leerem Zielrechner, es müssen alle Dateien abgeglichen werden:
 
 ```
-uli@ulinuc:~/tmp/ansible-test$ ansible-playbook copy-one-by-one.yml
+uli@ulinuc:~/tmp/ansible-folder-copy$ ansible-playbook copy-one-by-one.yml
 ...
 PLAY RECAP *******************************************************************************************************
 ansible-test               : ok=106  changed=103  unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
@@ -131,7 +135,7 @@ Stoppuhr:
 Aufruf bei bereits aktualisiertem Zielrechner, es müssen keinerlei Dateien abgeglichen werden:
 
 ```
-uli@ulinuc:~/tmp/ansible-test$ ansible-playbook copy-one-by-one.yml
+uli@ulinuc:~/tmp/ansible-folder-copy$ ansible-playbook copy-one-by-one.yml
 ...
 PLAY RECAP *******************************************************************************************************
 ansible-test               : ok=106  changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
@@ -147,7 +151,7 @@ Stoppuhr:
 ### Abgleich löschen
 
 ```
-uli@ulinuc:~/tmp/ansible-test$ ssh ansible-test rm -rf /tmp/copied-by-ansible
+uli@ulinuc:~/tmp/ansible-folder-copy$ ssh ansible-test rm -rf /tmp/copied-by-ansible
 ```
 
 Dateien komplett kopieren mit `copy`
@@ -156,7 +160,7 @@ Dateien komplett kopieren mit `copy`
 ### Erster Aufruf mit --check --diff
 
 ```
-uli@ulinuc:~/tmp/ansible-test$ ansible-playbook copy-folder.yml --check --diff
+uli@ulinuc:~/tmp/ansible-folder-copy$ ansible-playbook copy-folder.yml --check --diff
 PLAY [all] *******************************************************************************************************
 
 TASK [Gathering Facts] *******************************************************************************************
@@ -182,7 +186,7 @@ Stoppuhr - `time ansible-playbook copy-folder.yml --check --diff`
 Aufruf bei leerem Zielrechner, es müssen alle Dateien abgeglichen werden:
 
 ```
-uli@ulinuc:~/tmp/ansible-test$ ansible-playbook copy-folder.yml
+uli@ulinuc:~/tmp/ansible-folder-copy$ ansible-playbook copy-folder.yml
 ...
 PLAY RECAP *******************************************************************************************************
 ansible-test               : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
@@ -198,7 +202,7 @@ Stoppuhr:
 Aufruf bei bereits aktualisiertem Zielrechner, es müssen keinerlei Dateien abgeglichen werden:
 
 ```
-uli@ulinuc:~/tmp/ansible-test$ ansible-playbook copy-folder.yml
+uli@ulinuc:~/tmp/ansible-folder-copy$ ansible-playbook copy-folder.yml
 ...
 PLAY RECAP *******************************************************************************************************
 ansible-test               : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
@@ -214,7 +218,7 @@ Stoppuhr:
 ### Abgleich löschen
 
 ```
-uli@ulinuc:~/tmp/ansible-test$ ssh ansible-test rm -rf /tmp/copied-by-ansible
+uli@ulinuc:~/tmp/ansible-folder-copy$ ssh ansible-test rm -rf /tmp/copied-by-ansible
 ```
 
 Dateien komplett kopieren mit `synchronize`
@@ -223,7 +227,7 @@ Dateien komplett kopieren mit `synchronize`
 ### Erster Aufruf mit --check --diff
 
 ```
-uli@ulinuc:~/tmp/ansible-test$ ansible-playbook synchronize-folder.yml --check --diff
+uli@ulinuc:~/tmp/ansible-folder-copy$ ansible-playbook synchronize-folder.yml --check --diff
 PLAY [all] *******************************************************************************************************************************************************************************************************************************
 
 TASK [Gathering Facts] *******************************************************************************************************************************************************************************************************************
@@ -254,7 +258,7 @@ Stoppuhr - `time ansible-playbook synchronize-folder.yml --check --diff`
 Aufruf bei leerem Zielrechner, es müssen alle Dateien abgeglichen werden:
 
 ```
-uli@ulinuc:~/tmp/ansible-test$ ansible-playbook synchronize-folder.yml
+uli@ulinuc:~/tmp/ansible-folder-copy$ ansible-playbook synchronize-folder.yml
 ...
 PLAY RECAP *******************************************************************************************************
 ansible-test               : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
@@ -270,7 +274,7 @@ Stoppuhr:
 Aufruf bei bereits aktualisiertem Zielrechner, es müssen keinerlei Dateien abgeglichen werden:
 
 ```
-uli@ulinuc:~/tmp/ansible-test$ ansible-playbook synchronize-folder.yml
+uli@ulinuc:~/tmp/ansible-folder-copy$ ansible-playbook synchronize-folder.yml
 ...
 PLAY RECAP *******************************************************************************************************
 ansible-test               : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
@@ -286,7 +290,7 @@ Stoppuhr:
 ### Abgleich löschen
 
 ```
-uli@ulinuc:~/tmp/ansible-test$ ssh ansible-test rm -rf /tmp/copied-by-ansible
+uli@ulinuc:~/tmp/ansible-folder-copy$ ssh ansible-test rm -rf /tmp/copied-by-ansible
 ```
 
 Dateien komplett kopieren mit `copy` und `filetree`
@@ -295,35 +299,35 @@ Dateien komplett kopieren mit `copy` und `filetree`
 ### Erster Aufruf mit --check --diff
 
 ```
-uli@ulinuc:~/tmp/ansible-test$ ansible-playbook copy-filetree.yml --check --diff
+uli@ulinuc:~/tmp/ansible-folder-copy$ ansible-playbook copy-filetree.yml --check --diff
 TASK [copy-filetree-role : Copy complete folder using copy and filetree] *****************************************************************************************************************************************************************
-skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588249802.2199366, 'owner': 'uli', 'path': u'apache2', 'size': 28, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588249802.2199366}) 
-skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588249820.3719356, 'owner': 'uli', 'path': u'data', 'size': 8, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588249820.3719356}) 
-skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588249859.3399334, 'owner': 'uli', 'path': u'apache2/conf.d', 'size': 26, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588249859.3399334}) 
-skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588249879.5759323, 'owner': 'uli', 'path': u'apache2/vhosts.d', 'size': 28, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588249879.5759323}) 
+skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588249802.2199366, 'owner': 'uli', 'path': u'apache2', 'size': 28, 'root': u'/home/uli/tmp/ansible-folder-copy/files/rollout/', 'ctime': 1588249802.2199366}) 
+skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588249820.3719356, 'owner': 'uli', 'path': u'data', 'size': 8, 'root': u'/home/uli/tmp/ansible-folder-copy/files/rollout/', 'ctime': 1588249820.3719356}) 
+skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588249859.3399334, 'owner': 'uli', 'path': u'apache2/conf.d', 'size': 26, 'root': u'/home/uli/tmp/ansible-folder-copy/files/rollout/', 'ctime': 1588249859.3399334}) 
+skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588249879.5759323, 'owner': 'uli', 'path': u'apache2/vhosts.d', 'size': 28, 'root': u'/home/uli/tmp/ansible-folder-copy/files/rollout/', 'ctime': 1588249879.5759323}) 
 --- before
-+++ after: /home/uli/tmp/ansible-test/files/rollout/apache2/conf.d/template.conf
++++ after: /home/uli/tmp/ansible-folder-copy/files/rollout/apache2/conf.d/template.conf
 @@ -0,0 +1 @@
 +Erste Version - template.conf
 
-changed: [ansible-test] => (item={'src': u'/home/uli/tmp/ansible-test/files/rollout/apache2/conf.d/template.conf', 'group': u'uli', 'uid': 1000, 'state': 'file', 'gid': 1000, 'mode': '0664', 'mtime': 1588249859.3399334, 'owner': 'uli', 'path': u'apache2/conf.d/template.conf', 'size': 30, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588249859.3399334})
+changed: [ansible-test] => (item={'src': u'/home/uli/tmp/ansible-folder-copy/files/rollout/apache2/conf.d/template.conf', 'group': u'uli', 'uid': 1000, 'state': 'file', 'gid': 1000, 'mode': '0664', 'mtime': 1588249859.3399334, 'owner': 'uli', 'path': u'apache2/conf.d/template.conf', 'size': 30, 'root': u'/home/uli/tmp/ansible-folder-copy/files/rollout/', 'ctime': 1588249859.3399334})
 --- before
-+++ after: /home/uli/tmp/ansible-test/files/rollout/apache2/vhosts.d/template.vhost
++++ after: /home/uli/tmp/ansible-folder-copy/files/rollout/apache2/vhosts.d/template.vhost
 @@ -0,0 +1 @@
 +Erste Version - template.vhost
 
-changed: [ansible-test] => (item={'src': u'/home/uli/tmp/ansible-test/files/rollout/apache2/vhosts.d/template.vhost', 'group': u'uli', 'uid': 1000, 'state': 'file', 'gid': 1000, 'mode': '0664', 'mtime': 1588249879.5759323, 'owner': 'uli', 'path': u'apache2/vhosts.d/template.vhost', 'size': 31, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588249879.5759323})
-skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588249820.3719356, 'owner': 'uli', 'path': u'data/with', 'size': 8, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588249820.3719356}) 
-skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588249820.3719356, 'owner': 'uli', 'path': u'data/with/deep', 'size': 10, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588249820.3719356}) 
-skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588250159.7319174, 'owner': 'uli', 'path': u'data/with/deep/paths', 'size': 1400, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588250159.7319174}) 
+changed: [ansible-test] => (item={'src': u'/home/uli/tmp/ansible-folder-copy/files/rollout/apache2/vhosts.d/template.vhost', 'group': u'uli', 'uid': 1000, 'state': 'file', 'gid': 1000, 'mode': '0664', 'mtime': 1588249879.5759323, 'owner': 'uli', 'path': u'apache2/vhosts.d/template.vhost', 'size': 31, 'root': u'/home/uli/tmp/ansible-folder-copy/files/rollout/', 'ctime': 1588249879.5759323})
+skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588249820.3719356, 'owner': 'uli', 'path': u'data/with', 'size': 8, 'root': u'/home/uli/tmp/ansible-folder-copy/files/rollout/', 'ctime': 1588249820.3719356}) 
+skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588249820.3719356, 'owner': 'uli', 'path': u'data/with/deep', 'size': 10, 'root': u'/home/uli/tmp/ansible-folder-copy/files/rollout/', 'ctime': 1588249820.3719356}) 
+skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 1588250159.7319174, 'owner': 'uli', 'path': u'data/with/deep/paths', 'size': 1400, 'root': u'/home/uli/tmp/ansible-folder-copy/files/rollout/', 'ctime': 1588250159.7319174}) 
 --- before
-+++ after: /home/uli/tmp/ansible-test/files/rollout/data/with/deep/paths/001.txt
++++ after: /home/uli/tmp/ansible-folder-copy/files/rollout/data/with/deep/paths/001.txt
 @@ -0,0 +1 @@
 +Datei 001 - 1
 
-changed: [ansible-test] => (item={'src': u'/home/uli/tmp/ansible-test/files/rollout/data/with/deep/paths/001.txt', 'group': u'uli', 'uid': 1000, 'state': 'file', 'gid': 1000, 'mode': '0664', 'mtime': 1588250159.5719173, 'owner': 'uli', 'path': u'data/with/deep/paths/001.txt', 'size': 14, 'root': u'/home/uli/tmp/ansible-test/files/rollout/', 'ctime': 1588250159.5719173})
+changed: [ansible-test] => (item={'src': u'/home/uli/tmp/ansible-folder-copy/files/rollout/data/with/deep/paths/001.txt', 'group': u'uli', 'uid': 1000, 'state': 'file', 'gid': 1000, 'mode': '0664', 'mtime': 1588250159.5719173, 'owner': 'uli', 'path': u'data/with/deep/paths/001.txt', 'size': 14, 'root': u'/home/uli/tmp/ansible-folder-copy/files/rollout/', 'ctime': 1588250159.5719173})
 --- before
-+++ after: /home/uli/tmp/ansible-test/files/rollout/data/with/deep/paths/002.txt
++++ after: /home/uli/tmp/ansible-folder-copy/files/rollout/data/with/deep/paths/002.txt
 @@ -0,0 +1 @@
 +Datei 002 - 2
 
@@ -343,7 +347,7 @@ Stoppuhr - `time ansible-playbook copy-filetree.yml --check --diff`
 Aufruf bei leerem Zielrechner, es müssen alle Dateien abgeglichen werden:
 
 ```
-uli@ulinuc:~/tmp/ansible-test$ ansible-playbook copy-filetree.yml
+uli@ulinuc:~/tmp/ansible-folder-copy$ ansible-playbook copy-filetree.yml
 ...
 PLAY RECAP *******************************************************************************************************
 ansible-test               : ok=5    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
@@ -359,7 +363,7 @@ Stoppuhr:
 Aufruf bei bereits aktualisiertem Zielrechner, es müssen keinerlei Dateien abgeglichen werden:
 
 ```
-uli@ulinuc:~/tmp/ansible-test$ ansible-playbook copy-filetree.yml
+uli@ulinuc:~/tmp/ansible-folder-copy$ ansible-playbook copy-filetree.yml
 ...
 PLAY RECAP *******************************************************************************************************
 ansible-test               : ok=5    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
@@ -375,7 +379,7 @@ Stoppuhr:
 ### Abgleich löschen
 
 ```
-uli@ulinuc:~/tmp/ansible-test$ ssh ansible-test rm -rf /tmp/copied-by-ansible
+uli@ulinuc:~/tmp/ansible-folder-copy$ ssh ansible-test rm -rf /tmp/copied-by-ansible
 ```
 
 Dateien komplett kopieren mit `file` und `filetree`
@@ -550,7 +554,7 @@ done
 ---
 # tasks/synchronize-folder
 - name: Synchronize complete folder
-  synchronize: src=rollout dest=/tmp/copied-by-ansible times=no checksum=yes delete=yes
+  synchronize: src=rollout/ dest=/tmp/copied-by-ansible times=no checksum=yes delete=yes
 ```
 
 ### roles/copy-filetree-role/tasks/main.yml
@@ -615,7 +619,7 @@ done
 ### Test
 
 ```
-uli@desktop:~/ansible-test$ ansible all -m ping
+uli@desktop:~/ansible-folder-copy$ ansible all -m ping
 ansible-test | SUCCESS => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/bin/python"
@@ -628,13 +632,116 @@ ansible-test | SUCCESS => {
 Bewertung
 ---------
 
-| Kriterium                              | Gewichtung | copy-einzeln  | copy-komplett | synchronize-komplett | copy-filetree | file-filetree |
-| -------------------------------------- | ---------- | ------------- | ------------- | -------------------- | ------------- | ------------- |
-| Einfache Anwendung                     |            | nein          | ja            | ja                   | ja            | NA            |
-| Schnelle Ausführung - Zeit in Sekunden |            | 240 - 400s    | 200 - 300s    | 10s                  | 240 - 400s    | NA            |
-| Schnelle Ausführung - Wertung          |            | sehr schlecht | schlecht      | gut                  | sehr schlecht | NA            |
-| Ausgabe `--check --diff`               |            | super         | sehr schlecht | mittel               | super         | NA            |
-| Irritierende Zusatzausgaben            |            | super         | super         | super                | schlecht      | NA            |
+Kriterium                                | Gewichtung | copy-einzeln  | copy-komplett | synchronize-komplett | copy-filetree | file-filetree
+---------------------------------------- | ---------- | ------------- | ------------- | -------------------- | ------------- | -------------
+Einfache Anwendung                       |            | nein          | ja            | ja                   | ja            | NA
+Schnelle Ausführung - Zeit in Sekunden   |            | 240 - 400s    | 200 - 300s    | 10s                  | 240 - 400s    | NA
+Schnelle Ausführung - Wertung            |            | sehr schlecht | schlecht      | gut                  | sehr schlecht | NA
+Ausgabe `--check --diff`                 |            | super         | sehr schlecht | mittel               | super         | NA
+Irritierende Zusatzausgaben              |            | super         | super         | super                | schlecht      | NA
+Lange Pause bei den Fortschrittsausgaben |            | nein          | ja            | nein                 | nein          | NA
+
+Für einzelne Dateien (bis max. 5) würde ich COPY-ONE-BY-ONE (=COPY-EINZELN) verwenden.
+Für mehrere Dateien (grob bis 30) würde ich COPY-FILETREE verwenden und für sehr
+viele Dateien SYNCHRONIZE-FOLDER (=SYNCHRONIZE-KOMPLETT).
+
+### Einfache Anwendung
+
+Alle Konstrukte sind einfach in der Anwendung bis auf COPY-ONE-BY-ONE (=COPY-EINZELN).
+Bei COPY-ONE-BY-ONE müssen alle Dateien einzeln im Ansible-Task aufgelistet werden.
+In unserem Beispiel sind das über 100 Stück:
+
+```
+...
+- name: copy 001.txt
+  copy: src=rollout/data/with/deep/paths/001.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/001.txt
+
+- name: copy 002.txt
+  copy: src=rollout/data/with/deep/paths/002.txt dest=/tmp/copied-by-ansible/data/with/deep/paths/002.txt
+...
+```
+
+Sehr umständlich!
+
+### Schnelle Ausführung
+
+Fast alle Konstrukte sind sehr langsam, sie brauchen zwischen 4 und 8 Minuten für die Ausführung.
+Die Streuung pro Ausführung ist enorm. Nur SYNCHRONIZE-FOLDER (SYNCHRONIZE-KOMPLETT) ist sehr viel schneller
+und benötigt nur 10 Sekunden!
+
+### Aussagekräftige Ausgabe bei `--check --diff`
+
+Fast alle Konstrukte liefern aussagekräftige Ausgaben bei `... --check --diff`.
+Die Ausgaben sehen dann grob so aus:
+
+```diff
+--- before: /tmp/copied-by-ansible/data/with/deep/paths/070.txt
++++ after: /home/uli/git/public/ansible-folder-copy/files/rollout/data/with/deep/paths/070.txt
+@@ -1,5 +1 @@
+ Datei 070 - 70
+-
+-Ein paar neue Zeilen eingefuegt,
+-damit wir "--check --diff" schoen
+-zeigen koennen!
+```
+
+Graphisch:
+
+![Bildschirmfoto mit Diff-Ausgabe](/images/ansible-folder-copy_diff.png)
+
+Eine Ausnahme ist SYNCHRONIZE-FOLDER (SYNCHRONIZE-KOMPLETT).
+Hier werden DIFFs mit kryptischen Zeichen angedeutet:
+
+```
+TASK [synchronize-folder-role : Synchronize complete folder] ***********************************************************
+<fcsT...... data/with/deep/paths/070.txt
+changed: [ansible-test]
+```
+
+### Keine irritierenden Zusatzausgaben
+
+Irritierende Zusatzausgaben gibt es primär bei COPY-FILETREE. Sie sehen so aus:
+
+```
+TASK [copy-filetree-role : Copy complete folder using copy and filetree] ***********************************************
+skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 158831...
+skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 158831...
+skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 158831...
+skipping: [ansible-test] => (item={'group': u'uli', 'uid': 1000, 'state': 'directory', 'gid': 1000, 'mode': '0775', 'mtime': 158831...
+--- before
++++ after: /home/uli/git/public/ansible-folder-copy/files/rollout/apache2/conf.d/template.conf
+@@ -0,0 +1 @@
++Erste Version - template.conf
+
+changed: [ansible-test] => (item={'src': u'/home/uli/git/public/ansible-folder-copy/files/rollout/apache2/conf.d/template.conf', 'g...
+..
+```
+
+Graphisch:
+
+![Bildschirmfoto mit Skipping-Meldungen](/images/ansible-folder-copy_skipping.png)
+
+Auf einem farbfähigen Terminal erscheinen die Zusatzausgaben in blau und stechen etwas in's Auge.
+Sie können weitgehend unterdrückt werden mit dieser Änderung an "ansible.cfg":
+
+```diff
+ # messages. NOTE: the task header will still be shown regardless of whether or not the
+ # task is skipped.
+ #
+-#display_skipped_hosts = True
++display_skipped_hosts = False
+ 
+ # By default, if a task in a playbook does not include a name: field then
+ # ansible-playbook will construct a header that includes the task's action but
+```
+
+### Lange Pause bei den Fortschrittsausgaben
+
+Fast alle Konstrukte sind sehr langsam. Die Wartezeit wird in der Regel verkürzt mit
+Ausgaben der Art "Bearbeite Datei XYZ". Nur COPY-FOLDER (COPY-KOMPLETT) gibt lediglich
+eine Zeile "Bearbeite Verzeichnis XYZ" aus gefolgt von minutenlanger Pause.
+Ungeduldige Anwender gehen von einem Aufhängen aus und brechen den Job ab!
+
 
 Links
 -----
@@ -646,4 +753,13 @@ Links
 Änderungen
 ----------
 
+* 2020-05-01: Verweis auf Ansible-Version (2.9.3) und [Github](https://github.com/uli-heller/ansible-folder-copy) hinzugefügt, lange Pause
+    * Irritierende Zusatzausgaben und Abhilfe
+    * Pfad korrigiert: ansible-test -> ansible-folder-copy
+    * Erklärender Text zu "Einfache Anwendung"
+    * Erklärender Text zu "Schnelle Ausführung"
+    * Erklärender Text zu "Lange Pause bei den Fortschrittsausgaben"
+    * Erklärender Text zu "Aussagekräftige Ausgabe bei `--check --diff`"
+    * Tippfehler bei synchronize-folder.yml
+    * Bewertung
 * 2020-04-30: Erste Version
