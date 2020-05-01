@@ -5,7 +5,7 @@ Manchmal muß ich einen ganzen Verzeichnisbaum auf einen Rechner übertragen,
 der mittels Ansible administriert wird. Leider gibt es keine Lösung
 hierfür, die "supertoll" ist.
 
-Dieser Artikel basiert auf Ansible-2.9.3, die Quelltexte befinden
+Dieser Artikel basiert auf Ansible-2.9.7, die Quelltexte befinden
 sich auf [Github](https://github.com/uli-heller/ansible-folder-copy).
 
 <!-- more -->
